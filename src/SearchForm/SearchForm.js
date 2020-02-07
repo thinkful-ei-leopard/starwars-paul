@@ -21,36 +21,44 @@ class SearchForm extends Component {
 
     let foundPeople = [];
     let pagenum;
+    let urls = [];
 
     for (let i = 1; i < 10; i++) {
       pagenum = i;
+      urls.push(`https://swapi.co/api/people/?page=${pagenum}`);
+    }
 
-      const url = `https://swapi.co/api/people/?page=${pagenum}`;
+    let requests = urls.map(url => fetch(url));
+    console.log(requests);
 
-      fetch(url)
-        .then(res => {
+    Promise.all(requests)
+      .then(responses => {
+        for (let res of responses) {
           if (!res.ok) {
             throw new Error('there was an error!');
           }
-          return res.json();
-        })
-        .then(data => {
+        }
+        return responses;
+      })
+      .then(responses => Promise.all(responses.map(r => r.json())))
+      .then(pages => {
+        pages.forEach(data => {
           let character = this.state.character.toLowerCase();
           data.results.map(person => {
             let casedPerson = person.name.toLowerCase();
             if (casedPerson.includes(character)) {
-              foundPeople.push(person.name)
-            };
+              foundPeople.push(person.name);
+            }
           });
-          console.log(foundPeople);
-        })
-        .then(() => {
-          this.setState({
-            people: [...foundPeople],
-            loading: false
-          });
-        })
-    }
+        });
+      })
+      .then(() => {
+        this.setState({
+          people: [...foundPeople],
+          loading: false,
+          character: ''
+        });
+      });
   };
 
   handleChange = event => {
@@ -87,10 +95,7 @@ class SearchForm extends Component {
             <div>
               <ul>
                 {people.map((person, idx) => {
-                  return (
-                  <li key={idx}>{person}
-                  </li>
-                  );
+                  return <li key={idx}>{person}</li>;
                 })}
               </ul>
             </div>
