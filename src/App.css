@@ -18,3 +18,8 @@ li {
   margin-left: 20px;
 }
 
+.search-error {
+  color: red;
+  padding-bottom: 10px;
+  height: 20px;
+}

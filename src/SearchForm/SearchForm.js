@@ -7,13 +7,30 @@ class SearchForm extends Component {
     this.state = {
       loading: false,
       character: '',
-      people: []
+      people: [],
+      nameError: ''
     };
   }
+
+  validate = () => {
+    let nameError = '';
+    if (this.state.character.length === 0) {
+      nameError = 'please enter a character';
+    }
+    if (nameError) {
+      this.setState({ nameError });
+      return false;
+    }
+    return true;
+  };
 
   handleSubmit = e => {
     e.preventDefault();
     console.log(this.state);
+    let isValid = this.validate();
+    if (!isValid) {
+      return;
+    }
 
     this.setState({
       loading: true
@@ -65,7 +82,8 @@ class SearchForm extends Component {
   handleChange = event => {
     console.log(event.target.value);
     this.setState({
-      character: event.target.value
+      character: event.target.value,
+      nameError: ''
     });
   };
 
@@ -74,6 +92,8 @@ class SearchForm extends Component {
 
     return (
       <div className="search-form-results">
+        <div className="search-error">{this.state.nameError}</div>
+
         <form onSubmit={this.handleSubmit}>
           <label htmlFor="character-search">Search character: </label>
           <input
