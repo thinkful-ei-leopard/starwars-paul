@@ -4,11 +4,17 @@ h1 {
   margin-bottom: 100px;
 }
 
+li {
+  list-style: none;
+}
+
 .search-form-results {
   margin: 0 auto;
   text-align: center;
 }
 
-li {
-  list-style: none;
+.loading {
+  margin-top: 15px;
+  margin-left: 20px;
 }
+

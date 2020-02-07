@@ -47,8 +47,9 @@ class SearchForm extends Component {
           data.results.map(person => {
             let casedPerson = person.name.toLowerCase();
             if (casedPerson.includes(character)) {
-              foundPeople.push(person.name);
+              return foundPeople.push(person.name);
             }
+            return null;
           });
         });
       })
@@ -90,7 +91,7 @@ class SearchForm extends Component {
 
         <div className="results">
           {this.state.loading ? (
-            <div>Loading...</div>
+            <div className="loading">Loading...</div>
           ) : (
             <div>
               <ul>
