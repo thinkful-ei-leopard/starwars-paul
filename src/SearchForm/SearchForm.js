@@ -19,25 +19,38 @@ class SearchForm extends Component {
       loading: true
     });
 
-    const url = `https://swapi.co/api/people`;
-    fetch(url)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('there was an error!');
-        }
-        return res.json();
-      })
-      .then(data => {
-        let foundPeople = [];
-        console.log(data);
-        data.results.map(person => {
-          foundPeople.push(person.name);
-        });
-        this.setState({
-          people: [...foundPeople],
-          loading: false
+    let foundPeople = [];
+    let pagenum;
+
+    for (let i = 1; i < 10; i++) {
+      pagenum = i;
+
+      const url = `https://swapi.co/api/people/?page=${pagenum}`;
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('there was an error!');
+          }
+          return res.json();
         })
-      });
+        .then(data => {
+          let character = this.state.character.toLowerCase();
+          data.results.map(person => {
+            let casedPerson = person.name.toLowerCase();
+            if (casedPerson.includes(character)) {
+              foundPeople.push(person.name)
+            };
+          });
+          console.log(foundPeople);
+        })
+        .then(() => {
+          this.setState({
+            people: [...foundPeople],
+            loading: false
+          });
+        })
+    }
   };
 
   handleChange = event => {
@@ -59,6 +72,7 @@ class SearchForm extends Component {
             name="character"
             placeholder="Han Solo"
             id="character-search"
+            autoComplete="off"
             value={this.state.character}
             onChange={this.handleChange}
           />
@@ -72,15 +86,13 @@ class SearchForm extends Component {
           ) : (
             <div>
               <ul>
-
-              {people.map(person => {
-                return <li>{person}</li>
-              })}
+                {people.map((person, idx) => {
+                  return (
+                  <li key={idx}>{person}
+                  </li>
+                  );
+                })}
               </ul>
-              
-
-              {/* {console.log(people)} */}
-              
             </div>
           )}
         </div>
