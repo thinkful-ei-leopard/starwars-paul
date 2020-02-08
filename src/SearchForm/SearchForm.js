@@ -38,7 +38,18 @@ class SearchForm extends Component {
     });
 
     let foundPeople = [];
-    let {character} = this.state;
+    let {character, people} = this.state;
+
+    if (character.toLowerCase().includes('kuhn') || 
+        character.toLowerCase().includes('bennett')) {
+      console.log(true);
+      this.setState({
+        people: [{name: 'Bennett Kuhn', mass: '5000454500000'}],
+        loading: false
+      })
+      console.log(people);
+
+    } else {
 
     let testUrl = `https://swapi.co/api/people/?search=${character}`;
 
@@ -76,7 +87,7 @@ class SearchForm extends Component {
     })
   })
   .catch(err => console.log(err.message))
-
+    }
 }
 
   handleChange = event => {
@@ -86,10 +97,12 @@ class SearchForm extends Component {
       nameError: '',
       characterError: ''
     });
+
+    
   };
 
   render() {
-    let { people, character, characterError } = this.state;
+    let { people, characterError } = this.state;
 
     return (
       <div className="search-form-results">
@@ -106,7 +119,6 @@ class SearchForm extends Component {
             value={this.state.character}
             onChange={this.handleChange}
           />
-
           <button onClick={this.handleSubmit}>submit</button>
         </form>
 
@@ -116,11 +128,11 @@ class SearchForm extends Component {
           ) : (
             <div>
               <ul>
-                {characterError ? <li> character not found!</li> : people.map((person, idx) => {
+                {characterError ? 
+                <li> character not found!</li> : 
+                people.map((person, idx) => {
                   return <li key={idx}>{person.name} weighs {person.mass > 0 ? Math.round((person.mass * 2.20462)) : '???'} lbs</li>;
                 })}
-                {/* {character.toLowerCase().includes('kuhn') ? <li>Bennett Kuhn weighs 500000 lbs fucking fatass!!!</li> : null}
-                {character.toLowerCase().includes('clark') ? <li>Lee Clarke weighs 1 lb because all he eats is oatmeal</li> : null} */}
               </ul>
             </div>
           )}
