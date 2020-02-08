@@ -49,6 +49,7 @@ class SearchForm extends Component {
       return res.json();
     })
     .then(data => {
+      console.log(data.results);
       data.results.map(person => {
         let casedPerson = person.name.toLowerCase();
          if (casedPerson.includes(character)) {
@@ -106,7 +107,7 @@ class SearchForm extends Component {
             <div>
               <ul>
                 {people.map((person, idx) => {
-                  return <li key={idx}>{person.name} weighs {person.mass > 0 ? person.mass : '???'} lbs</li>;
+                  return <li key={idx}>{person.name} weighs {person.mass > 0 ? Math.round((person.mass * 2.20462)) : '???'} lbs</li>;
                 })}
               </ul>
             </div>
