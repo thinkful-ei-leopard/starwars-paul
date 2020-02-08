@@ -8,7 +8,8 @@ class SearchForm extends Component {
       loading: false,
       character: '',
       people: [],
-      nameError: ''
+      nameError: '',
+      characterError: ''
     };
   }
 
@@ -50,15 +51,23 @@ class SearchForm extends Component {
     })
     .then(data => {
       console.log(data.results);
+      if (data.results.length === 0) {
+        this.setState({
+          characterError: 'character not found!'
+        })
+        console.log(this.state.characterError);
+      } else {
       data.results.map(person => {
         let casedPerson = person.name.toLowerCase();
          if (casedPerson.includes(character)) {
           return foundPeople.push({name: person.name, mass: person.mass });
         }
+        return null;
+      })
+    }
         console.log(foundPeople);
         return null;
     })
-  })
   .then(() => {
     this.setState({
       people: [...foundPeople],
@@ -74,12 +83,13 @@ class SearchForm extends Component {
     console.log(event.target.value);
     this.setState({
       character: event.target.value,
-      nameError: ''
+      nameError: '',
+      characterError: ''
     });
   };
 
   render() {
-    let { people } = this.state;
+    let { people, character, characterError } = this.state;
 
     return (
       <div className="search-form-results">
@@ -106,9 +116,11 @@ class SearchForm extends Component {
           ) : (
             <div>
               <ul>
-                {people.map((person, idx) => {
+                {characterError ? <li> character not found!</li> : people.map((person, idx) => {
                   return <li key={idx}>{person.name} weighs {person.mass > 0 ? Math.round((person.mass * 2.20462)) : '???'} lbs</li>;
                 })}
+                {/* {character.toLowerCase().includes('kuhn') ? <li>Bennett Kuhn weighs 500000 lbs fucking fatass!!!</li> : null}
+                {character.toLowerCase().includes('clark') ? <li>Lee Clarke weighs 1 lb because all he eats is oatmeal</li> : null} */}
               </ul>
             </div>
           )}
