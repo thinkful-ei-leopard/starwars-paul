@@ -64,13 +64,14 @@ class SearchForm extends Component {
           data.results.map(person => {
             let casedPerson = person.name.toLowerCase();
             if (casedPerson.includes(character)) {
-              return foundPeople.push(person.name);
+              return foundPeople.push({name: person.name});
             }
             return null;
           });
         });
       })
       .then(() => {
+        console.log(this.state.people);
         this.setState({
           people: [...foundPeople],
           loading: false,
@@ -116,7 +117,7 @@ class SearchForm extends Component {
             <div>
               <ul>
                 {people.map((person, idx) => {
-                  return <li key={idx}>{person}</li>;
+                  return <li key={idx}>{person.name}</li>;
                 })}
               </ul>
             </div>
