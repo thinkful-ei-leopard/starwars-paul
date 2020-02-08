@@ -37,48 +37,37 @@ class SearchForm extends Component {
     });
 
     let foundPeople = [];
-    let pagenum;
-    let urls = [];
+    let {character} = this.state;
 
-    for (let i = 1; i < 10; i++) {
-      pagenum = i;
-      urls.push(`https://swapi.co/api/people/?page=${pagenum}`);
-    }
+    let testUrl = `https://swapi.co/api/people/?search=${character}`;
 
-    let requests = urls.map(url => fetch(url));
-    console.log(requests);
-
-    Promise.all(requests)
-      .then(responses => {
-        for (let res of responses) {
-          if (!res.ok) {
-            throw new Error('there was an error!');
-          }
+    fetch(testUrl)
+    .then(res => {
+      if(!res.ok) {
+        throw new Error ('there was an error!')
+      }
+      return res.json();
+    })
+    .then(data => {
+      data.results.map(person => {
+        let casedPerson = person.name.toLowerCase();
+         if (casedPerson.includes(character)) {
+          return foundPeople.push({name: person.name, mass: person.mass });
         }
-        return responses;
-      })
-      .then(responses => Promise.all(responses.map(r => r.json())))
-      .then(pages => {
-        pages.forEach(data => {
-          let character = this.state.character.toLowerCase();
-          data.results.map(person => {
-            let casedPerson = person.name.toLowerCase();
-            if (casedPerson.includes(character)) {
-              return foundPeople.push({name: person.name});
-            }
-            return null;
-          });
-        });
-      })
-      .then(() => {
-        console.log(this.state.people);
-        this.setState({
-          people: [...foundPeople],
-          loading: false,
-          character: ''
-        });
-      });
-  };
+        console.log(foundPeople);
+        return null;
+    })
+  })
+  .then(() => {
+    this.setState({
+      people: [...foundPeople],
+      loading: false,
+      character: ''
+    })
+  })
+  .catch(err => console.log(err.message))
+
+}
 
   handleChange = event => {
     console.log(event.target.value);
@@ -117,7 +106,7 @@ class SearchForm extends Component {
             <div>
               <ul>
                 {people.map((person, idx) => {
-                  return <li key={idx}>{person.name}</li>;
+                  return <li key={idx}>{person.name} weighs {person.mass > 0 ? person.mass : '???'} lbs</li>;
                 })}
               </ul>
             </div>
